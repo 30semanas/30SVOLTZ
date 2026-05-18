@@ -588,20 +588,53 @@ let photoBase64Conf = '';
 window.addEventListener('DOMContentLoaded', () => loadData(false));
 
 async function loadData(showMsg) {
-  showLoading(showMsg ? 'Sincronizando...' : 'Carregando...');
-  try {
-    const res  = await fetch(SHEETS_URL + '?action=getData&cb=' + Date.now());
-    const json = await res.json();
-    if (Array.isArray(json.mentors))       mentors       = json.mentors.filter(m => m.status === 'aprovado');
-    if (Array.isArray(json.allMentors))    pending       = json.allMentors.filter(m => m.status === 'pendente');
-    if (Array.isArray(json.registrations)) registrations = json.registrations;
-    if (showMsg) showToast('✅ DADOS ATUALIZADOS!');
-  } catch(e) {
-    mentors       = JSON.parse(localStorage.getItem('m_bkp') || '[]');
-    pending       = JSON.parse(localStorage.getItem('p_bkp') || '[]');
-    registrations = JSON.parse(localStorage.getItem('r_bkp') || '[]');
-    if (showMsg) showToast('⚠️ SEM CONEXÃO — DADOS LOCAIS');
+  showLoading(showMsg ? 'Sincronizando...' : 'Carregando confidentes...');
+
+  // Sempre carrega cache local primeiro para exibir rápido
+  const localMentors = JSON.parse(localStorage.getItem('m_bkp') || '[]');
+  const localPending = JSON.parse(localStorage.getItem('p_bkp') || '[]');
+  const localRegs    = JSON.parse(localStorage.getItem('r_bkp') || '[]');
+  if (localMentors.length > 0) {
+    mentors       = localMentors;
+    pending       = localPending;
+    registrations = localRegs;
+    hideLoading();
+    renderPublic();
+    if (document.getElementById('page-admin').classList.contains('active')) renderAdmin();
   }
+
+  // Depois busca do Sheets em background com timeout de 10s
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const res  = await fetch(SHEETS_URL + '?action=getData&cb=' + Date.now(), { signal: controller.signal });
+    clearTimeout(timeout);
+    const json = await res.json();
+
+    let updated = false;
+    if (Array.isArray(json.mentors)) {
+      mentors = json.mentors.filter(m => m.status === 'aprovado');
+      updated = true;
+    }
+    if (Array.isArray(json.allMentors)) {
+      pending = json.allMentors.filter(m => m.status === 'pendente');
+    }
+    if (Array.isArray(json.registrations)) {
+      registrations = json.registrations;
+    }
+
+    if (updated) {
+      localStorage.setItem('m_bkp', JSON.stringify(mentors));
+      localStorage.setItem('p_bkp', JSON.stringify(pending));
+      localStorage.setItem('r_bkp', JSON.stringify(registrations));
+      if (showMsg) showToast('✅ DADOS ATUALIZADOS!');
+    }
+  } catch(e) {
+    if (!localMentors.length) {
+      showToast('⚠️ Sem conexão com o servidor. Tente novamente.');
+    }
+  }
+
   hideLoading();
   renderPublic();
   if (document.getElementById('page-admin').classList.contains('active')) renderAdmin();
