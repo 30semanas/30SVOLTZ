@@ -949,6 +949,8 @@ async function notifyConfidente(regId){
     `*Sexo:* ${reg.sexo==='M'?'Masculino':'Feminino'}\n`+
     (reg.mensagem?`*Mensagem:* ${reg.mensagem}\n`:'')+
     `*Inscrição:* ${regDt}\n\n`+
+    `*Código do Agraciado:* ${reg.codigo||''}\n`+
+    `Use este código para registrar os encontros na área do confidente.\n\n`+
     `// Confie em uma nova direção`
   );
 
@@ -1321,6 +1323,8 @@ function buildWALink(r){
     `*Sexo:* ${r.sexo==='M'?'Masculino':'Feminino'}\n`+
     (r.mensagem?`*Mensagem:* ${r.mensagem}\n`:'')+
     `*Inscrição:* ${dtStr}\n\n`+
+    `*Código do Agraciado:* ${r.codigo||''}\n`+
+    `Use este código para registrar os encontros na área do confidente.\n\n`+
     `// Confie em uma nova direção`
   );
   return `https://wa.me/${wa}?text=${msg}`;
