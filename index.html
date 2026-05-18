@@ -279,7 +279,6 @@
   </header>
 
   <div class="hero">
-    <div class="hero-eyebrow"><div class="dot"></div><span>Programa de Mentoria Ativa</span></div>
     <h1>ESCOLHA SEU<span class="highlight">CONFIDENTE</span><span class="sub">30 SEMANAS</span></h1>
     <p class="hero-desc">Conecte-se com um confidente que vai caminhar com você nessa jornada. Escolha, inscreva-se e transforme suas próximas 30 semanas.</p>
     <div class="search-wrap">
@@ -826,16 +825,16 @@ async function notifyConfidente(regId){
   if(!reg)return;
   const mentor=mentors.find(m=>m.id===reg.mentorId)||{whatsapp:reg.mentorWhatsapp,name:reg.mentorName};
 
+  const regDt=reg.date?new Date(reg.date).toLocaleDateString('pt-BR'):'';
   const msg=encodeURIComponent(
-    ` *30 Semanas Voltz — Novo Agraciado!*\n\n`+
+    `*30 Semanas Voltz — Novo Agraciado!*\n`+
     `Olá *${mentor.name}*, você tem um novo agraciado!\n\n`+
-    ` *Nome:* ${reg.nome}\n`+
-    ` *Email:* ${reg.email}\n`+
-    ` *Telefone:* ${reg.telefone}\n`+
-    ` *Sexo:* ${reg.sexo==='M'?'Masculino':'Feminino'}\n`+
-    (reg.mensagem?`💬 *Mensagem:* ${reg.mensagem}\n`:'')+
-    `\n📅 *Inscrição:* ${new Date(reg.date).toLocaleDateString('pt-BR')}\n`+
-    `📅 *Notificado em:* ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}\n\n`+
+    `*Nome:* ${reg.nome}\n`+
+    `*Email:* ${reg.email}\n`+
+    `*Telefone:* ${reg.telefone}\n`+
+    `*Sexo:* ${reg.sexo==='M'?'Masculino':'Feminino'}\n`+
+    (reg.mensagem?`*Mensagem:* ${reg.mensagem}\n`:'')+
+    `*Inscrição:* ${regDt}\n\n`+
     `// Confie em uma nova direção`
   );
 
@@ -873,17 +872,15 @@ function renderPublic(q){
     const sexLabel=m.sexo==='M'?'Masculino':'Feminino';
     return `
       <div class="conf-card${isFull?' full':''}" onclick="${isFull?'':` openReg('${m.id}')`}">
-        <div class="photo-wrap">
+        <div class="photo-wrap ${borderClass}">
           <img src="${photo}" alt="${m.name}" loading="lazy" onerror="this.src='${avatar(m.name,m.sexo)}'">
           <div class="card-badge${isFull?' esgotado':''}">${isFull?'ESGOTADO':rem+' VAGA'+(rem!==1?'S':'')}</div>
         </div>
         <div class="card-stripe"></div>
         <div class="card-body">
           <h3>${m.name}</h3>
-          <div class="card-sex-tag ${m.sexo}">${sexLabel}</div>
-          <div class="card-meta">🔄 ${m.ciclos||0} ciclos &nbsp;|&nbsp; 📅 ${m.ultimoCiclo||'—'}</div>
-          ${m.desc?`<p>${m.desc}</p>`:''}
-          <button class="choose-btn"${isFull?' disabled':''}>${isFull?'SEM VAGAS':'// ESCOLHER ESTE CONFIDENTE'}</button>
+          <span class="card-sex-tag ${m.sexo}">${sexLabel}</span>
+          <button class="choose-btn" style="margin-top:12px;"${isFull?' disabled':''}>${isFull?'SEM VAGAS':'// ESCOLHER ESTE CONFIDENTE'}</button>
         </div>
       </div>`;
   }).join('');
@@ -1036,16 +1033,17 @@ function fmtDate(d){
 function buildWALink(r){
   if(!r.mentorWhatsapp) return '#';
   const wa=String(r.mentorWhatsapp).replace(/\D/g,'');
+  const dtStr=r.date?new Date(r.date).toLocaleDateString('pt-BR'):'';
   const msg=encodeURIComponent(
-    `*30 Semanas Voltz — Novo Agraciado!*\n\n`+
-    `Ola *${r.mentorName}*, voce tem um novo agraciado!\n\n`+
+    `*30 Semanas Voltz — Novo Agraciado!*\n`+
+    `Olá *${r.mentorName}*, você tem um novo agraciado!\n\n`+
     `*Nome:* ${r.nome}\n`+
     `*Email:* ${r.email}\n`+
     `*Telefone:* ${r.telefone}\n`+
     `*Sexo:* ${r.sexo==='M'?'Masculino':'Feminino'}\n`+
     (r.mensagem?`*Mensagem:* ${r.mensagem}\n`:'')+
-    `\n*Inscricao:* ${fmtDate(r.date)}\n`+
-    `\n// Confie em uma nova direcao`
+    `*Inscrição:* ${dtStr}\n\n`+
+    `// Confie em uma nova direção`
   );
   return `https://wa.me/${wa}?text=${msg}`;
 }
