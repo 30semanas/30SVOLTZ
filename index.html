@@ -902,6 +902,7 @@ function renderPublic(q){
     const isFull=(m.inscritos||0)>=m.vagas;
     const rem=Math.max(0,m.vagas-(m.inscritos||0));
     const photo=m.photo||avatar(m.name,m.sexo);
+    const borderClass=m.sexo==='M'?'photo-border-M':'photo-border-F';
     const sexLabel=m.sexo==='M'?'Masculino':'Feminino';
     return `
       <div class="conf-card${isFull?' full':''}" onclick="${isFull?'':` openReg('${m.id}')`}">
