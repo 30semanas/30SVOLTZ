@@ -874,7 +874,17 @@ async function submitRegistration(){
       notified:false, notifiedAt:''
     };
 
-    await post(reg);
+    const result = await post(reg);
+
+    // Verifica se o Apps Script recusou por falta de vaga (proteção server-side)
+    if (result.semVaga) {
+      btn.disabled=false;btn.textContent='✅ CONFIRMAR INSCRIÇÃO';
+      closeModal('register-modal');
+      await loadData(false);
+      document.getElementById('sem-vaga-modal').classList.add('open');
+      return;
+    }
+
     await loadData(false);
 
   } catch(e) {
@@ -1066,7 +1076,8 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 async function post(data){
   const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});
   const json=await res.json();
-  if(json.status!=='ok') throw new Error(json.error||'error');
+  // Não lança erro para semVaga — deixa o chamador tratar
+  if(json.status!=='ok' && !json.semVaga) throw new Error(json.error||'error');
   return json;
 }
 
