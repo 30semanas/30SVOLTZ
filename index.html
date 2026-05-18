@@ -304,6 +304,7 @@
     <div class="footer-brand">30 <span>SEMANAS</span> VOLTZ</div>
     <div style="display:flex;gap:16px;">
       <a href="#" onclick="showPage('login')">//  ACESSO ADMINISTRATIVO</a>
+      <a href="#" onclick="showPage('portal')">//  ÁREA DO CONFIDENTE</a>
     </div>
   </footer>
 </div>
@@ -455,6 +456,7 @@
       <button class="nav-btn active" onclick="switchTab('tab-pending',this)">⏳ PENDENTES <span id="pending-count-badge"></span></button>
       <button class="nav-btn" onclick="switchTab('tab-conf',this)">🎯 CONFIDENTES</button>
       <button class="nav-btn" onclick="switchTab('tab-regs',this)">📋 INSCRIÇÕES</button>
+      <button class="nav-btn" onclick="switchTab('tab-encontros',this)">📅 ENCONTROS</button>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="sync-btn" onclick="loadData(true)">🔄 SINCRONIZAR</button>
@@ -509,6 +511,31 @@
         </div>
       </div>
     </div>
+
+    <!-- TAB ENCONTROS -->
+    <div class="tab-section" id="tab-encontros">
+      <div class="admin-card">
+        <div class="admin-card-title">📅 ENCONTROS REGISTRADOS</div>
+        <div style="overflow-x:auto;">
+          <table class="regs-table" id="encontros-table">
+            <thead>
+              <tr>
+                <th>Agraciado</th>
+                <th>Confidente</th>
+                <th>Código</th>
+                <th>Encontros Realizados</th>
+                <th>Datas dos Encontros</th>
+                <th>Memórias</th>
+              </tr>
+            </thead>
+            <tbody id="encontros-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px;">Nenhum encontro registrado ainda.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -620,7 +647,12 @@ async function loadData(showMsg) {
         return m;
       });
     }
-    if (Array.isArray(json.registrations)) registrations = json.registrations;
+    if (Array.isArray(json.registrations)) {
+      registrations = json.registrations.map(r => ({
+        ...r,
+        encontros: typeof r.encontros === 'string' ? (()=>{try{return JSON.parse(r.encontros);}catch(e){return [];}})() : (r.encontros||[])
+      }));
+    }
     if (showMsg) showToast('✅ DADOS ATUALIZADOS!');
   } catch(e) {
     showToast('⚠️ Erro ao carregar. Verifique a conexão.');
@@ -865,9 +897,12 @@ async function submitRegistration(){
 
     btn.textContent='⏳ ENVIANDO...';
 
+    // Gera código único do agraciado
+    const codigo = 'AGR-' + Math.random().toString(36).substring(2,6).toUpperCase();
     const reg={
       action:'addRegistration',
       id:'R'+Date.now(),
+      codigo,
       mentorId:mentor.id, mentorName:mentor.name, mentorWhatsapp:mentor.whatsapp,
       nome, email, telefone, sexo:regSexo, mensagem,
       date:new Date().toISOString(),
@@ -1034,6 +1069,25 @@ function renderAdmin(){
     }).join('');
 
   // Registrations
+  // Encontros tab
+  const etbody = document.getElementById('encontros-tbody');
+  const regsWithEncontros = registrations.filter(r => r.encontros && r.encontros.length > 0);
+  etbody.innerHTML = registrations.length === 0
+    ? '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px;">Nenhuma inscrição ainda.</td></tr>'
+    : registrations.map(r => {
+        const encs = r.encontros || [];
+        const datas = encs.filter(e=>e.dataHora).map((e,i)=>`<div style="font-size:11px;color:var(--text-muted);">#${i+1}: ${fmtDate(e.dataHora)}</div>`).join('');
+        const memStr = r.datasMemorias ? `<span style="color:#81C784;font-size:12px;">✅ ${fmtDate(r.datasMemorias)}</span>` : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
+        return `<tr>
+          <td><strong>${r.nome}</strong></td>
+          <td>${r.mentorName}</td>
+          <td><span style="font-family:monospace;background:var(--dark3);padding:3px 8px;border-radius:4px;font-size:13px;letter-spacing:2px;color:var(--orange);">${r.codigo||'—'}</span></td>
+          <td style="text-align:center;font-family:'Bebas Neue',sans-serif;font-size:24px;color:${encs.length>0?'var(--orange)':'var(--text-muted)'};">${encs.filter(e=>e.dataHora).length}</td>
+          <td>${datas||'<span style="color:var(--text-muted);font-size:12px;">Nenhum ainda</span>'}</td>
+          <td>${memStr}</td>
+        </tr>`;
+      }).join('');
+
   const tbody=document.getElementById('regs-tbody');
   tbody.innerHTML=registrations.length===0
     ?'<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:40px;">Nenhuma inscrição ainda.</td></tr>'
@@ -1102,6 +1156,121 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
+
+
+// ════ PORTAL DO CONFIDENTE ════
+let portalReg = null;
+
+async function portalLogin() {
+  const code = document.getElementById('portal-code').value.trim().toUpperCase();
+  if (!code) return;
+  const btn = document.getElementById('portal-login-btn');
+  btn.disabled = true; btn.textContent = '⏳ VERIFICANDO...';
+  document.getElementById('portal-error').style.display = 'none';
+
+  try {
+    const res = await fetch(SHEETS_URL + '?action=getAgraciado&codigo=' + encodeURIComponent(code) + '&cb=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok' && json.agraciado) {
+      portalReg = json.agraciado;
+      document.getElementById('portal-login').style.display = 'none';
+      document.getElementById('portal-area').style.display = 'block';
+      document.getElementById('portal-nome-agraciado').textContent = portalReg.nome;
+      document.getElementById('portal-nome-confidente').textContent = portalReg.mentorName;
+      renderEncontros(portalReg.encontros || []);
+      // Preenche data das memórias se já existir
+      if (portalReg.datasMemorias) {
+        document.getElementById('portal-memorias-data').value = portalReg.datasMemorias;
+        document.getElementById('portal-memorias-saved').style.display = 'block';
+        document.getElementById('portal-memorias-saved').textContent = '✅ Memórias registradas em: ' + fmtDate(portalReg.datasMemorias);
+      }
+    } else {
+      document.getElementById('portal-error').style.display = 'block';
+    }
+  } catch(e) {
+    document.getElementById('portal-error').style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'ACESSAR';
+}
+
+function renderEncontros(encontros) {
+  const list = document.getElementById('portal-encontros-list');
+  list.innerHTML = '';
+  if (!encontros || encontros.length === 0) {
+    list.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum encontro registrado ainda. Clique em + para adicionar.</p>';
+    return;
+  }
+  encontros.forEach((enc, idx) => {
+    const div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;';
+    div.innerHTML = `
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--orange);min-width:32px;">${idx+1}</div>
+      <div style="flex:1;">
+        <label style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:4px;">Encontro ${idx+1}</label>
+        <input type="datetime-local" value="${enc.dataHora||''}" data-idx="${idx}" onchange="updateEncontro(this)" style="background:var(--dark);border:1px solid var(--border);border-radius:4px;padding:8px 12px;color:var(--text);font-size:14px;font-family:'Barlow',sans-serif;width:100%;outline:none;color-scheme:dark;">
+      </div>
+      <button onclick="removeEncontro(${idx})" style="background:transparent;border:1px solid var(--border);color:var(--text-muted);width:30px;height:30px;border-radius:4px;cursor:pointer;font-size:14px;" title="Remover">✕</button>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function addEncontroField() {
+  if (!portalReg) return;
+  if (!portalReg.encontros) portalReg.encontros = [];
+  portalReg.encontros.push({ dataHora: '' });
+  renderEncontros(portalReg.encontros);
+  // Scroll para o novo campo
+  const list = document.getElementById('portal-encontros-list');
+  list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function updateEncontro(input) {
+  const idx = parseInt(input.dataset.idx);
+  if (portalReg && portalReg.encontros) {
+    portalReg.encontros[idx].dataHora = input.value;
+  }
+}
+
+function removeEncontro(idx) {
+  if (!portalReg || !portalReg.encontros) return;
+  portalReg.encontros.splice(idx, 1);
+  renderEncontros(portalReg.encontros);
+}
+
+async function saveAllEncontros() {
+  if (!portalReg) return;
+  const btn = document.querySelector('#portal-area > button');
+  btn.disabled = true; btn.textContent = '⏳ SALVANDO...';
+  try {
+    await post({
+      action: 'saveEncontros',
+      regId: portalReg.id,
+      encontros: portalReg.encontros || []
+    });
+    document.getElementById('portal-save-msg').style.display = 'block';
+    document.getElementById('portal-save-msg').textContent = '✅ Encontros salvos com sucesso em ' + new Date().toLocaleString('pt-BR');
+    setTimeout(() => document.getElementById('portal-save-msg').style.display = 'none', 4000);
+  } catch(e) {
+    showToast('⚠️ Erro ao salvar. Tente novamente.');
+  }
+  btn.disabled = false; btn.textContent = '💾 SALVAR TODOS OS ENCONTROS';
+}
+
+async function saveMemorias() {
+  if (!portalReg) return;
+  const data = document.getElementById('portal-memorias-data').value;
+  if (!data) { showToast('⚠️ Selecione a data das memórias.'); return; }
+  try {
+    await post({ action: 'saveMemorias', regId: portalReg.id, datasMemorias: data });
+    portalReg.datasMemorias = data;
+    document.getElementById('portal-memorias-saved').style.display = 'block';
+    document.getElementById('portal-memorias-saved').textContent = '✅ Memórias registradas em: ' + fmtDate(data);
+    showToast('✅ DATA DAS MEMÓRIAS SALVA!');
+  } catch(e) {
+    showToast('⚠️ Erro ao salvar. Tente novamente.');
+  }
+}
 
 // ════ PHONE MASK ════
 function applyPhoneMask(input) {
@@ -1226,6 +1395,69 @@ function getPhotoSrc(m){
       Por favor, escolha um confidente que corresponda ao seu sexo. 🙏
     </p>
     <button class="btn-primary" onclick="closeModal('wrong-sex-modal')">ENTENDI, VOU ESCOLHER OUTRO</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════ PORTAL DO CONFIDENTE ═══════════════ -->
+<div id="page-portal" class="page">
+  <div class="cadastro-header">
+    <div class="brand-logo">
+      <div class="brand-badge">CICLO</div>
+      <div class="brand-name">30 <span>SEMANAS</span> VOLTZ</div>
+    </div>
+    <a href="#" class="header-btn" onclick="showPage('public')">← VOLTAR</a>
+  </div>
+
+  <!-- LOGIN DO CONFIDENTE -->
+  <div id="portal-login" style="min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center;padding:20px;">
+    <div class="login-box" style="max-width:440px;">
+      <div class="login-logo">30<span>S</span></div>
+      <div class="login-sub">// Área do Confidente</div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:24px;line-height:1.6;">Digite o código do agraciado que foi enviado no WhatsApp para acessar os registros de encontro.</p>
+      <div class="form-group">
+        <label>Código do Agraciado</label>
+        <input type="text" id="portal-code" placeholder="Ex: AGR-7X4K" style="text-transform:uppercase;letter-spacing:3px;font-size:18px;text-align:center;" maxlength="10" oninput="this.value=this.value.toUpperCase()">
+      </div>
+      <button class="btn-primary" id="portal-login-btn" onclick="portalLogin()">ACESSAR</button>
+      <div class="login-error" id="portal-error">Código inválido. Verifique e tente novamente.</div>
+    </div>
+  </div>
+
+  <!-- AREA DE ENCONTROS -->
+  <div id="portal-area" style="display:none;max-width:700px;margin:0 auto;padding:40px;">
+
+    <div style="margin-bottom:28px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--orange);margin-bottom:4px;">// AGRACIADO</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;" id="portal-nome-agraciado">—</div>
+      <div style="font-size:13px;color:var(--text-muted);">Confidente: <span id="portal-nome-confidente" style="color:var(--text);"></span></div>
+    </div>
+
+    <!-- ENCONTROS -->
+    <div class="admin-card" style="margin-bottom:20px;">
+      <div class="admin-card-title">REGISTRO DE ENCONTROS</div>
+      <div id="portal-encontros-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+      <button class="btn-primary" style="width:auto;padding:10px 24px;font-size:13px;" onclick="addEncontroField()">+ ADICIONAR ENCONTRO</button>
+    </div>
+
+    <!-- ESCRITA DAS MEMÓRIAS -->
+    <div class="admin-card" style="margin-bottom:20px;">
+      <div class="admin-card-title">ESCRITA DAS MEMÓRIAS</div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Registre a data em que o agraciado leu suas memórias com você.</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data da Leitura das Memórias</label>
+          <input type="datetime-local" id="portal-memorias-data" style="color-scheme:dark;">
+        </div>
+        <div style="display:flex;align-items:flex-end;padding-bottom:14px;">
+          <button class="btn-primary" style="padding:11px 20px;font-size:13px;" onclick="saveMemorias()">💾 SALVAR</button>
+        </div>
+      </div>
+      <div id="portal-memorias-saved" style="display:none;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);border-radius:6px;padding:10px 14px;font-size:13px;color:#81C784;margin-top:8px;"></div>
+    </div>
+
+    <button class="btn-primary" style="background:transparent;border:1px solid var(--border);color:var(--text-muted);margin-top:8px;" onclick="saveAllEncontros()">💾 SALVAR TODOS OS ENCONTROS</button>
+    <div id="portal-save-msg" style="display:none;margin-top:12px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);border-radius:6px;padding:10px 14px;font-size:13px;color:#81C784;text-align:center;"></div>
   </div>
 </div>
 
