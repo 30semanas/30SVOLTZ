@@ -282,9 +282,7 @@
   <div class="hero">
     <h1>ESCOLHA SEU<span class="highlight">CONFIDENTE</span><span class="sub">30 SEMANAS</span></h1>
     <p class="hero-desc">Conecte-se com um confidente que vai caminhar com você nessa jornada. Escolha, inscreva-se e transforme suas próximas 30 semanas.</p>
-    <div style="margin-bottom:20px;">
-      <a href="#" onclick="showPage('participante')" class="header-btn primary" style="font-size:14px;padding:12px 28px;border-radius:6px;display:inline-block;">📝 AINDA NÃO SOU PARTICIPANTE — CADASTRAR</a>
-    </div>
+    <div style="margin-bottom:20px;"><a href="#" onclick="showPage('participante')" class="header-btn primary" style="font-size:14px;padding:12px 28px;border-radius:6px;display:inline-block;">📝 AINDA NÃO SOU PARTICIPANTE — CADASTRAR</a></div>
     <div class="search-wrap">
       <input type="text" id="search-input" placeholder="Buscar confidente por nome...">
       <button onclick="filterCards()">BUSCAR</button>
@@ -308,7 +306,6 @@
     <div class="footer-brand">30 <span>SEMANAS</span> VOLTZ</div>
     <div style="display:flex;gap:16px;">
       <a href="#" onclick="showPage('login')">//  ACESSO ADMINISTRATIVO</a>
-      <a href="#" onclick="showPage('portal')">//  ÁREA DO CONFIDENTE</a>
     </div>
   </footer>
 </div>
@@ -460,7 +457,6 @@
       <button class="nav-btn active" onclick="switchTab('tab-pending',this)">⏳ PENDENTES <span id="pending-count-badge"></span></button>
       <button class="nav-btn" onclick="switchTab('tab-conf',this)">🎯 CONFIDENTES</button>
       <button class="nav-btn" onclick="switchTab('tab-regs',this)">📋 INSCRIÇÕES</button>
-      <button class="nav-btn" onclick="switchTab('tab-encontros',this)">📅 ENCONTROS</button>
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <button class="sync-btn" onclick="loadData(true)">🔄 SINCRONIZAR</button>
@@ -515,31 +511,6 @@
         </div>
       </div>
     </div>
-
-    <!-- TAB ENCONTROS -->
-    <div class="tab-section" id="tab-encontros">
-      <div class="admin-card">
-        <div class="admin-card-title">📅 ENCONTROS REGISTRADOS</div>
-        <div style="overflow-x:auto;">
-          <table class="regs-table" id="encontros-table">
-            <thead>
-              <tr>
-                <th>Agraciado</th>
-                <th>Confidente</th>
-                <th>Código</th>
-                <th>Encontros Realizados</th>
-                <th>Datas dos Encontros</th>
-                <th>Memórias</th>
-              </tr>
-            </thead>
-            <tbody id="encontros-tbody">
-              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px;">Nenhum encontro registrado ainda.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
 
@@ -554,25 +525,50 @@
         <div class="conf-name" id="modal-name">—</div>
       </div>
     </div>
-    <h2>FAÇA SUA INSCRIÇÃO</h2>
-    <p class="subtitle">Preencha seus dados para ser atendido por este confidente.</p>
 
-    <div class="form-group"><label>Nome completo *</label><input type="text" id="reg-nome" placeholder="Seu nome completo"></div>
-    <div class="form-row">
-      <div class="form-group"><label>Email *</label><input type="email" id="reg-email" placeholder="seu@email.com"></div>
-      <div class="form-group"><label>WhatsApp *</label><input type="text" id="reg-tel" placeholder="(99) 99999-9999" maxlength="15" oninput="applyPhoneMask(this)"></div>
-    </div>
-    <div class="form-group">
-      <label>Sexo *</label>
-      <div class="sex-options">
-        <label class="sex-opt" id="reg-sex-M" onclick="selectSexReg('M')"><input type="radio" name="reg-sexo" value="M"> ♂ MASCULINO</label>
-        <label class="sex-opt" id="reg-sex-F" onclick="selectSexReg('F')"><input type="radio" name="reg-sexo" value="F"> ♀ FEMININO</label>
+    <!-- STEP 1 -->
+    <div id="reg-step1">
+      <h2>SEU CÓDIGO</h2>
+      <p class="subtitle">Digite seu código de participante para carregar seus dados.</p>
+      <div class="form-group">
+        <label>Código do Participante *</label>
+        <input type="text" id="reg-codigo-part" placeholder="PART-XXXX"
+          style="text-transform:uppercase;letter-spacing:4px;font-size:22px;text-align:center;font-family:'Bebas Neue',sans-serif;"
+          maxlength="9" oninput="this.value=this.value.toUpperCase()">
       </div>
+      <div id="reg-code-error" style="display:none;background:rgba(229,57,53,0.1);border:1px solid rgba(229,57,53,0.3);color:#FF6B6B;border-radius:4px;padding:10px;font-size:13px;margin-bottom:10px;">
+        Código não encontrado. Verifique ou realize seu cadastro.
+      </div>
+      <button class="btn-primary" id="reg-code-btn" onclick="buscarParticipante()">CARREGAR MEUS DADOS</button>
+      <a href="#" onclick="closeModal('register-modal');showPage('participante')"
+        style="display:block;text-align:center;margin-top:16px;color:var(--text-muted);font-size:12px;font-family:'Barlow Condensed',sans-serif;letter-spacing:1px;text-decoration:none;">
+        Ainda não tenho cadastro → <span style="color:var(--orange);">CADASTRAR AGORA</span>
+      </a>
     </div>
-    <div class="form-group"><label>Por que quer este confidente?</label><textarea id="reg-msg" placeholder="Conte o que você busca nessa jornada..."></textarea></div>
-    <button class="btn-primary" id="reg-btn" onclick="submitRegistration()">✅ CONFIRMAR INSCRIÇÃO</button>
+
+    <!-- STEP 2 -->
+    <div id="reg-step2" style="display:none;">
+      <h2>CONFIRMAR INSCRIÇÃO</h2>
+      <p class="subtitle">Seus dados foram carregados. Confirme abaixo.</p>
+      <div style="background:var(--dark3);border:1px solid var(--border);border-left:3px solid var(--orange);border-radius:6px;padding:14px 16px;margin-bottom:16px;font-size:14px;line-height:2;">
+        <div><span style="color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Nome</span><br><strong id="reg-dados-nome" style="font-size:16px;"></strong></div>
+        <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div><span style="color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Email</span><br><span id="reg-dados-email" style="font-size:13px;"></span></div>
+          <div><span style="color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Telefone</span><br><span id="reg-dados-tel" style="font-size:13px;"></span></div>
+          <div><span style="color:var(--text-muted);font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;">Sexo</span><br><span id="reg-dados-sexo" style="font-size:13px;"></span></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Por que quer este confidente? <span style="color:var(--text-muted);font-size:10px;">(opcional)</span></label>
+        <textarea id="reg-msg" placeholder="Conte o que você busca nessa jornada..."></textarea>
+      </div>
+      <button class="btn-primary" id="reg-btn" onclick="submitRegistration()">✅ CONFIRMAR INSCRIÇÃO</button>
+      <button onclick="voltarStep1()" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:4px;padding:10px;margin-top:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">← VOLTAR</button>
+    </div>
   </div>
 </div>
+
+
 
 <!-- MODAL SUCESSO AGRACIADO -->
 <div class="modal-overlay" id="success-modal">
@@ -611,13 +607,14 @@ let mentors = [];        // approved confidentes
 let pending = [];        // pending approval
 let registrations = [];
 let currentId = null;
+let partDadosCarregados = null;
+let partSexo = '';
 let confSexo = '';
 let regSexo  = '';
 let photoBase64Conf = '';
 
 // ════ BOOT ════
 window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('search-input').value = '';
   setupPhoneMasks();
   loadData(false);
 });
@@ -636,8 +633,8 @@ async function loadData(showMsg) {
       mentors = json.mentors.filter(m => m.status === 'aprovado').map(m => {
         // Se foto for base64 grande, guarda no localStorage e remove do objeto
         if (m.photo && m.photo.startsWith('data:')) {
-          savePhoto(m.id, m.photo);
-          return {...m, photo: ''};
+          try { localStorage.setItem('photo_'+m.id, m.photo); } catch(e){}
+          return {...m, photo: localStorage.getItem('photo_'+m.id)||''};
         }
         return m;
       });
@@ -645,18 +642,13 @@ async function loadData(showMsg) {
     if (Array.isArray(json.allMentors)) {
       pending = json.allMentors.filter(m => m.status === 'pendente').map(m => {
         if (m.photo && m.photo.startsWith('data:')) {
-          savePhoto(m.id, m.photo);
-          return {...m, photo: ''};
+          try { localStorage.setItem('photo_'+m.id, m.photo); } catch(e){}
+          return {...m, photo: localStorage.getItem('photo_'+m.id)||''};
         }
         return m;
       });
     }
-    if (Array.isArray(json.registrations)) {
-      registrations = json.registrations.map(r => ({
-        ...r,
-        encontros: typeof r.encontros === 'string' ? (()=>{try{return JSON.parse(r.encontros);}catch(e){return [];}})() : (r.encontros||[])
-      }));
-    }
+    if (Array.isArray(json.registrations)) registrations = json.registrations;
     if (showMsg) showToast('✅ DADOS ATUALIZADOS!');
   } catch(e) {
     showToast('⚠️ Erro ao carregar. Verifique a conexão.');
@@ -860,73 +852,43 @@ async function deleteConfidente(id){
 
 // ════ SUBMIT AGRACIADO ════
 async function submitRegistration(){
-  if(!partDadosCarregados){showToast('⚠️ BUSQUE SEUS DADOS PRIMEIRO');return;}
-
-  const nome     = partDadosCarregados.nome;
-  const email    = partDadosCarregados.email;
-  const telefone = partDadosCarregados.telefone;
-  const mensagem = document.getElementById('reg-msg').value.trim();
-  regSexo        = partDadosCarregados.sexo;
+  if (!partDadosCarregados) { showToast('⚠️ CARREGUE SEUS DADOS PRIMEIRO'); return; }
+  var nome     = partDadosCarregados.nome;
+  var email    = partDadosCarregados.email;
+  var telefone = partDadosCarregados.telefone;
+  var mensagem = document.getElementById('reg-msg').value.trim();
+  regSexo      = partDadosCarregados.sexo;
 
   const mentor=mentors.find(m=>m.id===currentId);
   if(!mentor) return;
 
   // Validação de sexo
   if(regSexo!==mentor.sexo){
+    showToast('💛 Você precisa escolher um confidente do mesmo sexo!');
     closeModal('register-modal');
+    // Mostra modal de sexo errado
     document.getElementById('wrong-sex-modal').classList.add('open');
     return;
   }
 
   const btn=document.getElementById('reg-btn');
-  btn.disabled=true;btn.textContent='⏳ VERIFICANDO VAGA...';
+  btn.disabled=true;btn.textContent='⏳ ENVIANDO...';
 
-  try {
-    // Verifica vaga em tempo real no Sheets ANTES de salvar
-    const checkRes = await fetch(SHEETS_URL + '?action=checkVaga&mentorId=' + mentor.id + '&cb=' + Date.now());
-    const checkJson = await checkRes.json();
+  const reg={
+    action:'addRegistration',
+    id:'R'+Date.now(),
+    mentorId:mentor.id, mentorName:mentor.name, mentorWhatsapp:mentor.whatsapp,
+    nome, email, telefone, sexo:regSexo, mensagem,
+    date:new Date().toISOString(),
+    notified:false, notifiedAt:''
+  };
 
-    if (!checkJson.temVaga) {
-      // Vaga preenchida por outra pessoa enquanto preenchia o formulário
-      btn.disabled=false;btn.textContent='✅ CONFIRMAR INSCRIÇÃO';
-      closeModal('register-modal');
-      await loadData(false); // Atualiza para mostrar esgotado
-      // Mostra modal de sem vaga
-      document.getElementById('sem-vaga-modal').classList.add('open');
-      return;
-    }
-
-    btn.textContent='⏳ ENVIANDO...';
-
-    // Gera código único do agraciado
-    const codigo = 'AGR-' + Math.random().toString(36).substring(2,6).toUpperCase();
-    const reg={
-      action:'addRegistration',
-      id:'R'+Date.now(),
-      codigo,
-      mentorId:mentor.id, mentorName:mentor.name, mentorWhatsapp:mentor.whatsapp,
-      nome, email, telefone, sexo:regSexo, mensagem,
-      date:new Date().toISOString(),
-      notified:false, notifiedAt:''
-    };
-
-    const result = await post(reg);
-
-    // Verifica se o Apps Script recusou por falta de vaga (proteção server-side)
-    if (result.semVaga) {
-      btn.disabled=false;btn.textContent='✅ CONFIRMAR INSCRIÇÃO';
-      closeModal('register-modal');
-      await loadData(false);
-      document.getElementById('sem-vaga-modal').classList.add('open');
-      return;
-    }
-
-    await loadData(false);
-
-  } catch(e) {
-    showToast('⚠️ Erro ao confirmar inscrição. Tente novamente.');
-    btn.disabled=false;btn.textContent='✅ CONFIRMAR INSCRIÇÃO';
-    return;
+  try{await post(reg);await loadData(false);}
+  catch(e){
+    registrations.push({...reg});
+    const idx=mentors.findIndex(m=>m.id===mentor.id);
+    if(idx>-1) mentors[idx].inscritos=(mentors[idx].inscritos||0)+1;
+    backup();renderPublic();
   }
 
   btn.disabled=false;btn.textContent='✅ CONFIRMAR INSCRIÇÃO';
@@ -950,8 +912,6 @@ async function notifyConfidente(regId){
     `*Sexo:* ${reg.sexo==='M'?'Masculino':'Feminino'}\n`+
     (reg.mensagem?`*Mensagem:* ${reg.mensagem}\n`:'')+
     `*Inscrição:* ${regDt}\n\n`+
-    `*Código do Agraciado:* ${reg.codigo||''}\n`+
-    `Use este código para registrar os encontros na área do confidente.\n\n`+
     `// Confie em uma nova direção`
   );
 
@@ -984,17 +944,17 @@ function renderPublic(q){
 
   window._mentorList = list;
   var cards = '';
-  for (var i=0; i<list.length; i++) {
+  for (var i = 0; i < list.length; i++) {
     var m = list[i];
     var isFull = (m.inscritos||0) >= m.vagas;
     var rem = Math.max(0, m.vagas - (m.inscritos||0));
-    var photo = getPhotoSrc(m);
+    var photo = m.photo || avatar(m.name, m.sexo);
     var bc = m.sexo === 'M' ? 'photo-border-M' : 'photo-border-F';
     var sl = m.sexo === 'M' ? 'Masculino' : 'Feminino';
-    cards += '<div class="conf-card' + (isFull?' full':'') + '">';
+    cards += '<div class="conf-card' + (isFull ? ' full' : '') + '">';
     cards += '<div class="photo-wrap ' + bc + '">';
     cards += '<img src="' + photo + '" alt="" loading="lazy">';
-    cards += '<div class="card-badge' + (isFull?' esgotado':'') + '">' + (isFull?'ESGOTADO':rem+' VAGA'+(rem!==1?'S':'')) + '</div>';
+    cards += '<div class="card-badge' + (isFull ? ' esgotado' : '') + '">' + (isFull ? 'ESGOTADO' : rem + ' VAGA' + (rem !== 1 ? 'S' : '')) + '</div>';
     cards += '</div><div class="card-stripe"></div><div class="card-body">';
     cards += '<h3>' + m.name + '</h3>';
     cards += '<span class="card-sex-tag ' + m.sexo + '">' + sl + '</span>';
@@ -1076,25 +1036,6 @@ function renderAdmin(){
     }).join('');
 
   // Registrations
-  // Encontros tab
-  const etbody = document.getElementById('encontros-tbody');
-  const regsWithEncontros = registrations.filter(r => r.encontros && r.encontros.length > 0);
-  etbody.innerHTML = registrations.length === 0
-    ? '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px;">Nenhuma inscrição ainda.</td></tr>'
-    : registrations.map(r => {
-        const encs = r.encontros || [];
-        const datas = encs.filter(e=>e.dataHora).map((e,i)=>`<div style="font-size:11px;color:var(--text-muted);">#${i+1}: ${fmtDate(e.dataHora)}</div>`).join('');
-        const memStr = r.datasMemorias ? `<span style="color:#81C784;font-size:12px;">✅ ${fmtDate(r.datasMemorias)}</span>` : '<span style="color:var(--text-muted);font-size:12px;">—</span>';
-        return `<tr>
-          <td><strong>${r.nome}</strong></td>
-          <td>${r.mentorName}</td>
-          <td><span style="font-family:monospace;background:var(--dark3);padding:3px 8px;border-radius:4px;font-size:13px;letter-spacing:2px;color:var(--orange);">${r.codigo||'—'}</span></td>
-          <td style="text-align:center;font-family:'Bebas Neue',sans-serif;font-size:24px;color:${encs.length>0?'var(--orange)':'var(--text-muted)'};">${encs.filter(e=>e.dataHora).length}</td>
-          <td>${datas||'<span style="color:var(--text-muted);font-size:12px;">Nenhum ainda</span>'}</td>
-          <td>${memStr}</td>
-        </tr>`;
-      }).join('');
-
   const tbody=document.getElementById('regs-tbody');
   tbody.innerHTML=registrations.length===0
     ?'<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:40px;">Nenhuma inscrição ainda.</td></tr>'
@@ -1122,11 +1063,12 @@ function renderAdmin(){
 
 // ════ MODAL ════
 function abrirModal(idx) {
-  var m = window._mentorList[parseInt(idx)];
-  if (!m) return;
+  var list = window._mentorList || [];
+  var m = list[parseInt(idx)];
+  if (!m) { alert('Erro ao abrir. Recarregue a página.'); return; }
   currentId = m.id;
   document.getElementById('modal-name').textContent = m.name;
-  document.getElementById('modal-photo').src = getPhotoSrc(m);
+  document.getElementById('modal-photo').src = m.photo || avatar(m.name, m.sexo);
   document.getElementById('reg-step1').style.display = 'block';
   document.getElementById('reg-step2').style.display = 'none';
   document.getElementById('reg-codigo-part').value = '';
@@ -1144,8 +1086,7 @@ function closeModal(id){document.getElementById(id).classList.remove('open');}
 async function post(data){
   const res=await fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});
   const json=await res.json();
-  // Não lança erro para semVaga — deixa o chamador tratar
-  if(json.status!=='ok' && !json.semVaga) throw new Error(json.error||'error');
+  if(json.status!=='ok') throw new Error(json.error||'error');
   return json;
 }
 
@@ -1170,256 +1111,6 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3500);
 }
 
-
-
-// ════ PORTAL DO CONFIDENTE ════
-let portalReg = null;
-
-async function portalLogin() {
-  const code = document.getElementById('portal-code').value.trim().toUpperCase();
-  if (!code) return;
-  const btn = document.getElementById('portal-login-btn');
-  btn.disabled = true; btn.textContent = '⏳ VERIFICANDO...';
-  document.getElementById('portal-error').style.display = 'none';
-
-  try {
-    const res = await fetch(SHEETS_URL + '?action=getAgraciado&codigo=' + encodeURIComponent(code) + '&cb=' + Date.now());
-    const json = await res.json();
-    if (json.status === 'ok' && json.agraciado) {
-      portalReg = json.agraciado;
-      document.getElementById('portal-login').style.display = 'none';
-      document.getElementById('portal-area').style.display = 'block';
-      document.getElementById('portal-nome-agraciado').textContent = portalReg.nome;
-      document.getElementById('portal-nome-confidente').textContent = portalReg.mentorName;
-      renderEncontros(portalReg.encontros || []);
-      // Preenche data das memórias se já existir — bloqueia edição
-      if (portalReg.datasMemorias) {
-        lockMemorias(portalReg.datasMemorias);
-      }
-    } else {
-      document.getElementById('portal-error').style.display = 'block';
-    }
-  } catch(e) {
-    document.getElementById('portal-error').style.display = 'block';
-  }
-  btn.disabled = false; btn.textContent = 'ACESSAR';
-}
-
-function renderEncontros(encontros) {
-  const list = document.getElementById('portal-encontros-list');
-  list.innerHTML = '';
-  if (!encontros || encontros.length === 0) {
-    list.innerHTML = '<p style="color:var(--text-muted);font-size:13px;">Nenhum encontro registrado ainda. Clique em + para adicionar.</p>';
-    return;
-  }
-  encontros.forEach((enc, idx) => {
-    const div = document.createElement('div');
-    div.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--dark3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;';
-    div.innerHTML = `
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--orange);min-width:32px;">${idx+1}</div>
-      <div style="flex:1;">
-        <label style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:4px;">Encontro ${idx+1}</label>
-        <input type="datetime-local" value="${enc.dataHora||''}" data-idx="${idx}" onchange="updateEncontro(this)" style="background:var(--dark);border:1px solid var(--border);border-radius:4px;padding:8px 12px;color:var(--text);font-size:14px;font-family:'Barlow',sans-serif;width:100%;outline:none;color-scheme:dark;">
-      </div>
-      <button onclick="removeEncontro(${idx})" style="background:transparent;border:1px solid var(--border);color:var(--text-muted);width:30px;height:30px;border-radius:4px;cursor:pointer;font-size:14px;" title="Remover">✕</button>
-    `;
-    list.appendChild(div);
-  });
-}
-
-function addEncontroField() {
-  if (!portalReg) return;
-  if (!portalReg.encontros) portalReg.encontros = [];
-  portalReg.encontros.push({ dataHora: '' });
-  renderEncontros(portalReg.encontros);
-  // Scroll para o novo campo
-  const list = document.getElementById('portal-encontros-list');
-  list.lastElementChild?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-function updateEncontro(input) {
-  const idx = parseInt(input.dataset.idx);
-  if (portalReg && portalReg.encontros) {
-    portalReg.encontros[idx].dataHora = input.value;
-  }
-}
-
-function removeEncontro(idx) {
-  if (!portalReg || !portalReg.encontros) return;
-  portalReg.encontros.splice(idx, 1);
-  renderEncontros(portalReg.encontros);
-}
-
-function lockMemorias(dataISO) {
-  // Esconde input e mostra confirmação permanente — não pode mais alterar
-  document.getElementById('portal-memorias-input-area').style.display = 'none';
-  const saved = document.getElementById('portal-memorias-saved');
-  saved.style.display = 'block';
-  saved.textContent = '✅ MEMÓRIAS REGISTRADAS EM: ' + fmtDate(dataISO);
-}
-
-async function saveAll() {
-  if (!portalReg) return;
-  const btn = document.querySelector('#portal-area > button');
-  btn.disabled = true; btn.textContent = '⏳ SALVANDO...';
-
-  const memData = document.getElementById('portal-memorias-data').value;
-  let ok = true;
-
-  try {
-    // Salva encontros
-    await post({
-      action: 'saveEncontros',
-      regId: portalReg.id,
-      encontros: portalReg.encontros || []
-    });
-
-    // Salva memórias se preenchida e ainda não registrada
-    if (memData && !portalReg.datasMemorias) {
-      await post({ action: 'saveMemorias', regId: portalReg.id, datasMemorias: memData });
-      portalReg.datasMemorias = memData;
-      lockMemorias(memData);
-    }
-
-    const msg = document.getElementById('portal-save-msg');
-    msg.style.display = 'block';
-    msg.textContent = '✅ TUDO SALVO COM SUCESSO — ' + new Date().toLocaleString('pt-BR');
-    setTimeout(() => msg.style.display = 'none', 5000);
-
-  } catch(e) {
-    showToast('⚠️ Erro ao salvar. Tente novamente.');
-  }
-
-  btn.disabled = false; btn.textContent = '💾 SALVAR ATUALIZAÇÕES';
-}
-
-// Mantida para compatibilidade mas não usada mais diretamente
-async function saveMemorias() { await saveAll(); }
-
-
-// ════ PARTICIPANTE ════
-let partSexo = '';
-let partDadosCarregados = null;
-
-function selectSexPart(s) {
-  partSexo = s;
-  document.getElementById('part-sex-M').className = 'sex-opt'+(s==='M'?' selected-M':'');
-  document.getElementById('part-sex-F').className = 'sex-opt'+(s==='F'?' selected-F':'');
-}
-
-function applyCpfMask(input) {
-  let v = input.value.replace(/\D/g,'').substring(0,11);
-  v = v.replace(/(\d{3})(\d)/,'$1.$2');
-  v = v.replace(/(\d{3})(\d)/,'$1.$2');
-  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
-  input.value = v;
-}
-
-function gerarCodigoPart() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let code = 'PART-';
-  for (let i=0;i<4;i++) code += chars[Math.floor(Math.random()*chars.length)];
-  return code;
-}
-
-async function submitParticipante() {
-  const nome    = document.getElementById('part-nome').value.trim();
-  const tel     = document.getElementById('part-tel').value.trim();
-  const email   = document.getElementById('part-email').value.trim();
-  const nasc    = document.getElementById('part-nascimento').value;
-  const cpf     = document.getElementById('part-cpf').value.trim();
-  const eklesia = document.getElementById('part-eklesia').value.trim();
-
-  if (!nome||!tel||!email||!nasc||!cpf||!partSexo) { showToast('⚠️ PREENCHA TODOS OS CAMPOS OBRIGATÓRIOS'); return; }
-  if (!email.includes('@')) { showToast('⚠️ EMAIL INVÁLIDO'); return; }
-
-  const btn = document.getElementById('part-btn');
-  btn.disabled = true; btn.textContent = '⏳ CADASTRANDO...';
-
-  const codigo = gerarCodigoPart();
-
-  try {
-    await post({
-      action: 'addParticipante',
-      id: 'P'+Date.now(),
-      nome, telefone: tel.replace(/\D/g,''), email,
-      nascimento: nasc, cpf, eklesia, sexo: partSexo,
-      codigo, createdAt: new Date().toISOString()
-    });
-
-    // Mostra resultado com QR
-    document.getElementById('part-form-area').style.display = 'none';
-    document.getElementById('part-result-area').style.display = 'block';
-    document.getElementById('part-result-nome').textContent = nome.toUpperCase();
-    document.getElementById('part-result-codigo').textContent = codigo;
-
-    // Gera QR Code
-    document.getElementById('qr-container').innerHTML = '';
-    if (window.QRCode) {
-      new QRCode(document.getElementById('qr-container'), {
-        text: codigo,
-        width: 180, height: 180,
-        colorDark: '#000000', colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.H
-      });
-    }
-
-  } catch(e) {
-    showToast('⚠️ ERRO AO CADASTRAR. TENTE NOVAMENTE.');
-    btn.disabled = false; btn.textContent = '✅ REALIZAR CADASTRO';
-    return;
-  }
-
-  btn.disabled = false; btn.textContent = '✅ REALIZAR CADASTRO';
-}
-
-// Reset form when navigating to participante page
-const _origShowPage = showPage;
-// ── STEP código participante no modal ──
-async function buscarParticipante() {
-  const codigo = document.getElementById('reg-codigo-part').value.trim().toUpperCase();
-  if (!codigo) return;
-  const btn = document.getElementById('reg-code-btn');
-  btn.disabled = true; btn.textContent = '⏳ BUSCANDO...';
-  document.getElementById('reg-code-error').style.display = 'none';
-
-  try {
-    const res = await fetch(SHEETS_URL + '?action=getParticipante&codigo=' + encodeURIComponent(codigo) + '&cb=' + Date.now());
-    const json = await res.json();
-    if (json.status === 'ok' && json.participante) {
-      partDadosCarregados = json.participante;
-      regSexo = json.participante.sexo;
-
-      // Valida sexo ANTES de mostrar step2
-      const mentor = mentors.find(m=>m.id===currentId);
-      if (mentor && regSexo !== mentor.sexo) {
-        closeModal('register-modal');
-        document.getElementById('wrong-sex-modal').classList.add('open');
-        btn.disabled = false; btn.textContent = 'CARREGAR MEUS DADOS';
-        return;
-      }
-
-      // Mostra step 2
-      document.getElementById('reg-step1').style.display = 'none';
-      document.getElementById('reg-step2').style.display = 'block';
-      document.getElementById('reg-dados-nome').textContent = json.participante.nome;
-      document.getElementById('reg-dados-email').textContent = json.participante.email;
-      document.getElementById('reg-dados-tel').textContent = json.participante.telefone;
-      document.getElementById('reg-dados-sexo').textContent = json.participante.sexo === 'M' ? 'Masculino' : 'Feminino';
-    } else {
-      document.getElementById('reg-code-error').style.display = 'block';
-    }
-  } catch(e) {
-    document.getElementById('reg-code-error').style.display = 'block';
-  }
-  btn.disabled = false; btn.textContent = 'CARREGAR MEUS DADOS';
-}
-
-function voltarStep1() {
-  document.getElementById('reg-step1').style.display = 'block';
-  document.getElementById('reg-step2').style.display = 'none';
-  partDadosCarregados = null;
-}
 
 // ════ PHONE MASK ════
 function applyPhoneMask(input) {
@@ -1448,6 +1139,97 @@ function setupPhoneMasks() {
   });
 }
 
+
+// ════ PARTICIPANTE MODAL ════
+async function buscarParticipante() {
+  var codigo = document.getElementById('reg-codigo-part').value.trim().toUpperCase();
+  if (!codigo) { showToast('⚠️ DIGITE SEU CÓDIGO'); return; }
+  var btn = document.getElementById('reg-code-btn');
+  btn.disabled = true; btn.textContent = '⏳ BUSCANDO...';
+  document.getElementById('reg-code-error').style.display = 'none';
+  try {
+    var res = await fetch(SHEETS_URL + '?action=getParticipante&codigo=' + encodeURIComponent(codigo) + '&cb=' + Date.now());
+    var json = await res.json();
+    if (json.status === 'ok' && json.participante) {
+      partDadosCarregados = json.participante;
+      regSexo = json.participante.sexo;
+      // Check sex against mentor
+      var allM = window._mentorList || mentors;
+      var mentor = allM.find(function(m) { return m.id === currentId; });
+      if (mentor && regSexo !== mentor.sexo) {
+        btn.disabled = false; btn.textContent = 'CARREGAR MEUS DADOS';
+        closeModal('register-modal');
+        document.getElementById('wrong-sex-modal').classList.add('open');
+        return;
+      }
+      document.getElementById('reg-step1').style.display = 'none';
+      document.getElementById('reg-step2').style.display = 'block';
+      document.getElementById('reg-dados-nome').textContent = json.participante.nome;
+      document.getElementById('reg-dados-email').textContent = json.participante.email;
+      document.getElementById('reg-dados-tel').textContent = json.participante.telefone;
+      document.getElementById('reg-dados-sexo').textContent = json.participante.sexo === 'M' ? 'Masculino' : 'Feminino';
+    } else {
+      document.getElementById('reg-code-error').style.display = 'block';
+    }
+  } catch(e) {
+    document.getElementById('reg-code-error').style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = 'CARREGAR MEUS DADOS';
+}
+
+function voltarStep1() {
+  document.getElementById('reg-step1').style.display = 'block';
+  document.getElementById('reg-step2').style.display = 'none';
+  partDadosCarregados = null;
+}
+
+function selectSexPart(s) {
+  partSexo = s;
+  document.getElementById('part-sex-M').className = 'sex-opt' + (s==='M'?' selected-M':'');
+  document.getElementById('part-sex-F').className = 'sex-opt' + (s==='F'?' selected-F':'');
+}
+
+function applyCpfMask(input) {
+  var v = input.value.replace(/\D/g,'').substring(0,11);
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d)/,'$1.$2');
+  v = v.replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  input.value = v;
+}
+
+function gerarCodigoPart() {
+  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var code = 'PART-';
+  for (var i=0;i<4;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+async function submitParticipante() {
+  var nome    = document.getElementById('part-nome').value.trim();
+  var tel     = document.getElementById('part-tel').value.trim();
+  var email   = document.getElementById('part-email').value.trim();
+  var nasc    = document.getElementById('part-nascimento').value;
+  var cpf     = document.getElementById('part-cpf').value.trim();
+  var eklesia = document.getElementById('part-eklesia').value.trim();
+  if (!nome||!tel||!email||!nasc||!cpf||!partSexo) { showToast('⚠️ PREENCHA TODOS OS CAMPOS OBRIGATÓRIOS'); return; }
+  if (!email.includes('@')) { showToast('⚠️ EMAIL INVÁLIDO'); return; }
+  var btn = document.getElementById('part-btn');
+  btn.disabled = true; btn.textContent = '⏳ CADASTRANDO...';
+  var codigo = gerarCodigoPart();
+  try {
+    await post({ action:'addParticipante', id:'P'+Date.now(), nome, telefone:tel.replace(/\D/g,''), email, nascimento:nasc, cpf, eklesia, sexo:partSexo, codigo, createdAt:new Date().toISOString() });
+    document.getElementById('part-form-area').style.display = 'none';
+    document.getElementById('part-result-area').style.display = 'block';
+    document.getElementById('part-result-nome').textContent = nome.toUpperCase();
+    document.getElementById('part-result-codigo').textContent = codigo;
+    document.getElementById('qr-container').innerHTML = '';
+    if (window.QRCode) {
+      new QRCode(document.getElementById('qr-container'), { text:codigo, width:180, height:180, colorDark:'#000000', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.H });
+    }
+  } catch(e) { showToast('⚠️ ERRO AO CADASTRAR. TENTE NOVAMENTE.'); }
+  btn.disabled = false; btn.textContent = '✅ REALIZAR CADASTRO';
+}
+
 function fmtDate(d){
   if(!d) return '—';
   try{
@@ -1470,8 +1252,6 @@ function buildWALink(r){
     `*Sexo:* ${r.sexo==='M'?'Masculino':'Feminino'}\n`+
     (r.mensagem?`*Mensagem:* ${r.mensagem}\n`:'')+
     `*Inscrição:* ${dtStr}\n\n`+
-    `*Código do Agraciado:* ${r.codigo||''}\n`+
-    `Use este código para registrar os encontros na área do confidente.\n\n`+
     `// Confie em uma nova direção`
   );
   return `https://wa.me/${wa}?text=${msg}`;
@@ -1485,56 +1265,18 @@ function avatar(name,sexo){
   return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
 }
 
-function savePhoto(id, data) {
-  try {
-    // Divide em pedaços de 500KB para evitar limite do localStorage
-    const CHUNK = 500000;
-    const parts = Math.ceil(data.length / CHUNK);
-    localStorage.setItem('photo_parts_'+id, parts);
-    for (let i=0; i<parts; i++) {
-      localStorage.setItem('photo_'+id+'_'+i, data.slice(i*CHUNK, (i+1)*CHUNK));
-    }
-  } catch(e) {}
-}
-
-function loadPhoto(id) {
-  try {
-    const parts = parseInt(localStorage.getItem('photo_parts_'+id)||'0');
-    if (!parts) {
-      // Tenta formato antigo (chave simples)
-      return localStorage.getItem('photo_'+id)||'';
-    }
-    let data = '';
-    for (let i=0; i<parts; i++) {
-      data += localStorage.getItem('photo_'+id+'_'+i)||'';
-    }
-    return data;
-  } catch(e) { return ''; }
-}
-
 function getPhotoSrc(m){
   if(!m) return avatar('?','');
-  // Tenta localStorage (foto em cache)
-  const cached = loadPhoto(m.id);
-  if(cached && cached.trim() !== '') return cached;
+  // Tenta localStorage primeiro (base64 salvo anteriormente)
+  try {
+    const cached = localStorage.getItem('photo_'+m.id);
+    if(cached && cached.trim() !== '') return cached;
+  } catch(e){}
   // Drive URL ou base64 no objeto
   if(m.photo && m.photo.trim() !== '') return m.photo;
   return avatar(m.name, m.sexo);
 }
 </script>
-
-<!-- MODAL SEM VAGA -->
-<div class="modal-overlay" id="sem-vaga-modal">
-  <div class="modal" style="text-align:center;max-width:420px;">
-    <div class="success-icon">😔</div>
-    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:12px;">VAGA PREENCHIDA!</h2>
-    <p style="color:var(--text-muted);line-height:1.7;margin-bottom:24px;">
-      Infelizmente outra pessoa preencheu a última vaga deste confidente enquanto você preenchia o formulário.<br><br>
-      Por favor, escolha outro confidente disponível. 🙏
-    </p>
-    <button class="btn-primary" onclick="closeModal('sem-vaga-modal')">ESCOLHER OUTRO CONFIDENTE</button>
-  </div>
-</div>
 
 <!-- MODAL SEXO ERRADO -->
 <div class="modal-overlay" id="wrong-sex-modal">
@@ -1550,152 +1292,69 @@ function getPhotoSrc(m){
 </div>
 
 
-<!-- ═══════════════ PORTAL DO CONFIDENTE ═══════════════ -->
-<div id="page-portal" class="page">
-  <div class="cadastro-header">
-    <div class="brand-logo">
-      <div class="brand-badge">CICLO</div>
-      <div class="brand-name">30 <span>SEMANAS</span> VOLTZ</div>
-    </div>
-    <a href="#" class="header-btn" onclick="showPage('public')">← VOLTAR</a>
-  </div>
-
-  <!-- LOGIN DO CONFIDENTE -->
-  <div id="portal-login" style="min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center;padding:20px;">
-    <div class="login-box" style="max-width:440px;">
-      <div class="login-logo">30<span>S</span></div>
-      <div class="login-sub">// Área do Confidente</div>
-      <p style="color:var(--text-muted);font-size:13px;margin-bottom:24px;line-height:1.6;">Digite o código do agraciado que foi enviado no WhatsApp para acessar os registros de encontro.</p>
-      <div class="form-group">
-        <label>Código do Agraciado</label>
-        <input type="text" id="portal-code" placeholder="Ex: AGR-7X4K" style="text-transform:uppercase;letter-spacing:3px;font-size:18px;text-align:center;" maxlength="10" oninput="this.value=this.value.toUpperCase()">
-      </div>
-      <button class="btn-primary" id="portal-login-btn" onclick="portalLogin()">ACESSAR</button>
-      <div class="login-error" id="portal-error">Código inválido. Verifique e tente novamente.</div>
-    </div>
-  </div>
-
-  <!-- AREA DE ENCONTROS -->
-  <div id="portal-area" style="display:none;max-width:700px;margin:0 auto;padding:40px;">
-
-    <div style="margin-bottom:28px;">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--orange);margin-bottom:4px;">// AGRACIADO</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;" id="portal-nome-agraciado">—</div>
-      <div style="font-size:13px;color:var(--text-muted);">Confidente: <span id="portal-nome-confidente" style="color:var(--text);"></span></div>
-    </div>
-
-    <!-- ENCONTROS -->
-    <div class="admin-card" style="margin-bottom:20px;">
-      <div class="admin-card-title">REGISTRO DE ENCONTROS</div>
-      <div id="portal-encontros-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
-      <button class="btn-primary" style="width:auto;padding:10px 24px;font-size:13px;" onclick="addEncontroField()">+ ADICIONAR ENCONTRO</button>
-    </div>
-
-    <!-- ESCRITA DAS MEMÓRIAS -->
-    <div class="admin-card" style="margin-bottom:20px;">
-      <div class="admin-card-title">ESCRITA DAS MEMÓRIAS</div>
-      <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">Registre a data em que o agraciado leu suas memórias com você. Após salvar não poderá ser alterado.</p>
-      <div id="portal-memorias-input-area">
-        <div class="form-group">
-          <label>Data da Leitura das Memórias</label>
-          <input type="datetime-local" id="portal-memorias-data" style="color-scheme:dark;">
-        </div>
-      </div>
-      <div id="portal-memorias-saved" style="display:none;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);border-radius:6px;padding:12px 16px;font-size:14px;color:#81C784;margin-top:8px;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;"></div>
-    </div>
-
-    <button class="btn-primary" style="margin-top:8px;padding:16px;" onclick="saveAll()">💾 SALVAR ATUALIZAÇÕES</button>
-    <div id="portal-save-msg" style="display:none;margin-top:12px;background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.3);border-radius:6px;padding:12px 16px;font-size:14px;color:#81C784;text-align:center;font-family:'Barlow Condensed',sans-serif;font-weight:700;letter-spacing:1px;"></div>
-  </div>
-</div>
-
-
 <!-- ═══════════════ CADASTRO PARTICIPANTE ═══════════════ -->
 <div id="page-participante" class="page">
   <div class="cadastro-header">
-    <div class="brand-logo">
-      <div class="brand-badge">CICLO</div>
-      <div class="brand-name">30 <span>SEMANAS</span> VOLTZ</div>
-    </div>
+    <div class="brand-logo"><div class="brand-badge">CICLO</div><div class="brand-name">30 <span>SEMANAS</span> VOLTZ</div></div>
     <a href="#" class="header-btn" onclick="showPage('public')">← VOLTAR</a>
   </div>
-
-  <!-- FORMULÁRIO -->
   <div id="part-form-area" style="max-width:660px;margin:0 auto;padding:50px 40px;">
     <div class="cadastro-title">CADASTRO DE <span>PARTICIPANTE</span></div>
-    <p class="cadastro-sub">Preencha seus dados para participar do programa. Após o cadastro você receberá um código QR — salve-o pois será usado para registrar sua presença.</p>
-
+    <p class="cadastro-sub">Preencha seus dados. Após o cadastro você receberá um QR Code — salve-o pois será usado para registrar presença e escolher seu confidente.</p>
     <div class="cadastro-card">
       <div class="section-divider">// DADOS PESSOAIS</div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label>Nome Completo *</label>
-          <input type="text" id="part-nome" placeholder="Seu nome completo">
-        </div>
-        <div class="form-group">
-          <label>Telefone / WhatsApp *</label>
-          <input type="text" id="part-tel" placeholder="(99) 99999-9999" maxlength="15" oninput="applyPhoneMask(this)">
-        </div>
+        <div class="form-group"><label>Nome Completo *</label><input type="text" id="part-nome" placeholder="Seu nome completo"></div>
+        <div class="form-group"><label>Telefone *</label><input type="text" id="part-tel" placeholder="(99) 99999-9999" maxlength="15" oninput="applyPhoneMask(this)"></div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label>E-mail *</label>
-          <input type="email" id="part-email" placeholder="seu@email.com">
-        </div>
-        <div class="form-group">
-          <label>Data de Nascimento *</label>
-          <input type="date" id="part-nascimento" style="color-scheme:dark;">
-        </div>
+        <div class="form-group"><label>E-mail *</label><input type="email" id="part-email" placeholder="seu@email.com"></div>
+        <div class="form-group"><label>Data de Nascimento *</label><input type="date" id="part-nascimento" style="color-scheme:dark;"></div>
       </div>
-
       <div class="form-row">
-        <div class="form-group">
-          <label>CPF *</label>
-          <input type="text" id="part-cpf" placeholder="000.000.000-00" maxlength="14" oninput="applyCpfMask(this)">
-        </div>
-        <div class="form-group">
-          <label>Cód. Eklesia <span style="color:var(--text-muted);font-size:10px;">(opcional)</span></label>
-          <input type="text" id="part-eklesia" placeholder="Código Eklesia">
-        </div>
+        <div class="form-group"><label>CPF *</label><input type="text" id="part-cpf" placeholder="000.000.000-00" maxlength="14" oninput="applyCpfMask(this)"></div>
+        <div class="form-group"><label>Cód. Eklesia <span style="color:var(--text-muted);font-size:10px;">(opcional)</span></label><input type="text" id="part-eklesia" placeholder="Código Eklesia"></div>
       </div>
-
       <div class="form-group">
         <label>Sexo *</label>
         <div class="sex-options">
-          <label class="sex-opt" id="part-sex-M" onclick="selectSexPart('M')">
-            <input type="radio" name="part-sexo" value="M"> ♂ MASCULINO
-          </label>
-          <label class="sex-opt" id="part-sex-F" onclick="selectSexPart('F')">
-            <input type="radio" name="part-sexo" value="F"> ♀ FEMININO
-          </label>
+          <label class="sex-opt" id="part-sex-M" onclick="selectSexPart('M')"><input type="radio" name="part-sexo" value="M"> ♂ MASCULINO</label>
+          <label class="sex-opt" id="part-sex-F" onclick="selectSexPart('F')"><input type="radio" name="part-sexo" value="F"> ♀ FEMININO</label>
         </div>
       </div>
-
       <button class="btn-primary" id="part-btn" onclick="submitParticipante()">✅ REALIZAR CADASTRO</button>
     </div>
   </div>
-
-  <!-- RESULTADO / QR CODE -->
   <div id="part-result-area" style="display:none;max-width:500px;margin:0 auto;padding:50px 40px;text-align:center;">
     <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--orange);margin-bottom:8px;">// CADASTRO REALIZADO</div>
     <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;margin-bottom:4px;" id="part-result-nome"></div>
-
     <div style="background:var(--dark2);border:1px solid var(--border-green);border-top:3px solid var(--orange);border-radius:12px;padding:32px;margin:24px 0;">
       <div style="background:white;border-radius:8px;padding:16px;display:inline-block;margin-bottom:16px;" id="qr-container"></div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:6px;color:var(--orange);margin-bottom:12px;" id="part-result-codigo"></div>
-      <div style="font-size:13px;color:var(--text-muted);line-height:1.7;">
-        Faça um <strong style="color:var(--white);">print</strong> ou salve este QR Code.<br>
-        Ele será usado para registrar sua presença nos encontros<br>e para escolher seu confidente.
-      </div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.7;">Faça um <strong style="color:var(--white);">print</strong> ou salve este QR Code.<br>Ele será usado para registrar sua presença e escolher seu confidente.</div>
     </div>
-
-    <div style="background:rgba(232,77,28,0.1);border:1px solid rgba(232,77,28,0.3);border-radius:8px;padding:14px 18px;margin-bottom:28px;font-size:13px;color:var(--orange-light);line-height:1.6;">
-      ⚠️ <strong>Salve este código!</strong> Você precisará dele para escolher seu confidente e registrar presença nos encontros.
-    </div>
-
+    <div style="background:rgba(232,77,28,0.1);border:1px solid rgba(232,77,28,0.3);border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:var(--orange-light);line-height:1.6;">⚠️ <strong>Salve este código!</strong> Você precisará dele para escolher seu confidente.</div>
     <button class="btn-primary" onclick="showPage('public')" style="background:transparent;border:2px solid var(--orange);color:var(--orange);">VOLTAR AO INÍCIO</button>
+  </div>
+</div>
+
+<!-- MODAL SEXO ERRADO -->
+<div class="modal-overlay" id="wrong-sex-modal">
+  <div class="modal" style="text-align:center;max-width:420px;">
+    <div class="success-icon">💛</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:12px;">ATENÇÃO!</h2>
+    <p style="color:var(--text-muted);line-height:1.7;margin-bottom:24px;">No programa <strong style="color:var(--orange);">30 Semanas Voltz</strong>, o acompanhamento é sempre feito por um confidente do <strong>mesmo sexo</strong>.<br><br>Por favor, escolha um confidente que corresponda ao seu sexo. 🙏</p>
+    <button class="btn-primary" onclick="closeModal('wrong-sex-modal')">ENTENDI, VOU ESCOLHER OUTRO</button>
+  </div>
+</div>
+
+<!-- MODAL SEM VAGA -->
+<div class="modal-overlay" id="sem-vaga-modal">
+  <div class="modal" style="text-align:center;max-width:420px;">
+    <div class="success-icon">😔</div>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:12px;">VAGA PREENCHIDA!</h2>
+    <p style="color:var(--text-muted);line-height:1.7;margin-bottom:24px;">Infelizmente outra pessoa preencheu a última vaga deste confidente. Por favor, escolha outro confidente disponível.</p>
+    <button class="btn-primary" onclick="closeModal('sem-vaga-modal')">ESCOLHER OUTRO</button>
   </div>
 </div>
 
