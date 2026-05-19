@@ -190,6 +190,7 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);color:var(--text);mi
       <a href="#" class="header-btn primary" onclick="showPage('cadastro-confidente')">🎯 SER CONFIDENTE</a>
       <a href="#" class="header-btn" onclick="showPage('portal')">//  CONFIDENTE</a>
       <a href="#" class="header-btn" onclick="showPage('presenca')">//  PRESENÇA</a>
+      <a href="#" class="header-btn" onclick="showPage('cronometro')">⏱ CRONÔMETRO</a>
       <a href="#" class="header-btn" onclick="showPage('login')">⚙ ADMIN</a>
     </div>
   </header>
@@ -1138,6 +1139,173 @@ function avatar(name,sexo){const ini=(name||'?').split(' ').slice(0,2).map(w=>w[
     <button class="btn-primary" onclick="fecharResultadoPresenca()">OK — VOLTAR AO INÍCIO</button>
   </div>
 </div>
+
+
+<!-- ═══════════════ CRONÔMETRO ═══════════════ -->
+<div id="page-cronometro" class="page">
+
+  <!-- TELA DE REGRAS -->
+  <div id="cron-regras" style="min-height:100vh;background:var(--green-dark);display:flex;flex-direction:column;">
+    <div class="cadastro-header">
+      <div class="brand-logo"><div class="brand-badge">CICLO</div><div class="brand-name">30 <span>SEMANAS</span> VOLTZ</div></div>
+      <a href="#" class="header-btn" onclick="showPage('public')">← VOLTAR</a>
+    </div>
+    <div style="flex:1;padding:28px 24px 48px;max-width:680px;margin:0 auto;width:100%;">
+
+      <!-- APRESENTACAO -->
+      <div style="background:rgba(232,77,28,0.08);border:1px solid rgba(232,77,28,0.25);border-left:4px solid var(--orange);border-radius:8px;padding:18px 20px;margin-bottom:20px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:var(--orange);margin-bottom:8px;">APRESENTAÇÃO</div>
+        <p style="color:var(--text-muted);font-size:13px;line-height:1.7;">O facilitador deve se apresentar da seguinte forma:<br>
+        <em style="color:var(--white);">"Sou um(a) filho(a) amado(a) de Deus, vencendo a orfandade, rejeição e… Meu nome é…"</em></p>
+      </div>
+
+      <!-- TITULO REGRAS -->
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(40px,8vw,64px);letter-spacing:4px;color:var(--white);margin-bottom:16px;text-align:center;">REGRAS</div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px;">
+        <div style="background:var(--dark2);border:1px solid var(--border-green);border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--orange);min-width:28px;line-height:1;">1</div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:3px;">SILÊNCIO</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Uma pessoa fala por vez. Enquanto o outro fala, eu escuto. Não vou desenvolver conversas paralelas, atender celular ou responder mensagens.</div></div>
+        </div>
+        <div style="background:var(--dark2);border:1px solid var(--border-green);border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--orange);min-width:28px;line-height:1;">2</div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:3px;">FALAR NA PRIMEIRA PESSOA</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Falo apenas de mim, da minha experiência, do que me faz sofrer e de como tenho tratado isso.</div></div>
+        </div>
+        <div style="background:var(--dark2);border:1px solid var(--border-green);border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--orange);min-width:28px;line-height:1;">3</div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:3px;">RESPEITO</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Não estou aqui para condenar, aconselhar ou consertar, mas sim para ser solidário com os outros participantes do grupo.</div></div>
+        </div>
+        <div style="background:var(--dark2);border:1px solid var(--border-green);border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--orange);min-width:28px;line-height:1;">4</div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:3px;">TEMPO</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6;">Vou manter o foco. Para isso, devo compartilhar entre 3 a 5 minutos, conforme a instrução do líder.</div></div>
+        </div>
+        <div style="background:var(--dark2);border:1px solid var(--border-green);border-radius:8px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--orange);min-width:28px;line-height:1;">5</div>
+          <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--white);margin-bottom:3px;">CONFIDENCIALIDADE</div><div style="font-size:13px;color:var(--text-muted);line-height:1.6;">O que é dito aqui, fica aqui. Não vou comentar com ninguém o que é dito aqui, nem expor os participantes em ambientes externos.</div></div>
+        </div>
+      </div>
+
+      <!-- TEMPO -->
+      <div style="background:var(--dark2);border:1px solid var(--border-green);border-radius:8px;padding:20px 24px;margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text-muted);margin-bottom:14px;text-align:center;">TEMPO POR PARTICIPANTE</div>
+        <div style="display:flex;align-items:center;gap:20px;justify-content:center;">
+          <button onclick="ajustarTempo(-1)" style="width:48px;height:48px;background:var(--dark3);border:2px solid var(--border);color:var(--white);border-radius:8px;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--white)'">-</button>
+          <div style="text-align:center;min-width:110px;">
+            <div id="tempo-display" style="font-family:'Bebas Neue',sans-serif;font-size:68px;color:var(--orange);line-height:1;letter-spacing:2px;">3:00</div>
+            <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);margin-top:2px;">MINUTOS</div>
+          </div>
+          <button onclick="ajustarTempo(1)" style="width:48px;height:48px;background:var(--dark3);border:2px solid var(--border);color:var(--white);border-radius:8px;font-size:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--white)'">+</button>
+        </div>
+      </div>
+
+      <button onclick="iniciarPartilha()" style="width:100%;background:var(--orange);color:var(--white);border:none;border-radius:50px;padding:18px;font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;cursor:pointer;box-shadow:0 8px 24px rgba(232,77,28,0.4);transition:background .2s;" onmouseover="this.style.background='var(--orange-light)'" onmouseout="this.style.background='var(--orange)'">
+        INICIAR PARTILHA
+      </button>
+
+    </div>
+  </div>
+
+  <!-- TELA CRONÔMETRO -->
+  <div id="cron-timer" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;transition:background 0.6s ease;">
+    <div style="text-align:center;padding:40px 24px;width:100%;">
+      <div id="cron-label" style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:20px;">PARTILHA</div>
+      <div id="cron-tempo" style="font-family:'Bebas Neue',sans-serif;font-size:clamp(110px,30vw,200px);line-height:0.9;color:white;letter-spacing:4px;text-shadow:0 4px 48px rgba(0,0,0,0.3);">3:00</div>
+      <div id="cron-status" style="font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-top:28px;">PRONTO</div>
+    </div>
+    <div style="display:flex;gap:14px;padding:0 28px;width:100%;max-width:420px;">
+      <button id="btn-cron-iniciar" onclick="toggleCronometro()" style="flex:1;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,0.3);color:white;border-radius:14px;padding:18px 8px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:all .2s;">
+        INICIAR
+      </button>
+      <button onclick="zerarCronometro()" style="flex:1;background:rgba(255,255,255,0.15);backdrop-filter:blur(8px);border:2px solid rgba(255,255,255,0.3);color:white;border-radius:14px;padding:18px 8px;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:all .2s;">
+        ZERAR
+      </button>
+    </div>
+    <button onclick="voltarRegras()" style="margin-top:36px;background:transparent;border:none;color:rgba(255,255,255,0.35);font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;padding:8px 16px;" onmouseover="this.style.color='rgba(255,255,255,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.35)'">
+      REGRAS
+    </button>
+  </div>
+
+</div>
+
+<style>
+@keyframes piscaVermelho{0%,100%{background:#5C0000;}50%{background:#9B0000;}}
+</style>
+
+<script>
+// CRONOMETRO
+var cronMinutos=3,cronTotal=0,cronRestante=0,cronInterval=null,cronRodando=false;
+
+function ajustarTempo(d){
+  cronMinutos=Math.min(5,Math.max(1,cronMinutos+d));
+  document.getElementById('tempo-display').textContent=cronMinutos+':00';
+}
+
+function iniciarPartilha(){
+  cronTotal=cronMinutos*60;cronRestante=cronTotal;
+  cronRodando=false;
+  if(cronInterval){clearInterval(cronInterval);cronInterval=null;}
+  document.getElementById('cron-regras').style.display='none';
+  var t=document.getElementById('cron-timer');
+  t.style.display='flex';t.style.animation='';t.style.background='#0E3D1A';
+  atualizarDisplayCron();
+  document.getElementById('cron-status').textContent='PRONTO';
+  document.getElementById('btn-cron-iniciar').textContent='INICIAR';
+}
+
+function toggleCronometro(){
+  if(cronRodando){
+    clearInterval(cronInterval);cronInterval=null;cronRodando=false;
+    document.getElementById('btn-cron-iniciar').textContent='CONTINUAR';
+    document.getElementById('cron-status').textContent='PAUSADO';
+  }else{
+    cronRodando=true;
+    document.getElementById('btn-cron-iniciar').textContent='PAUSAR';
+    document.getElementById('cron-status').textContent='EM ANDAMENTO';
+    cronInterval=setInterval(function(){
+      if(cronRestante<=0){clearInterval(cronInterval);cronInterval=null;cronRodando=false;tempoEsgotado();return;}
+      cronRestante--;atualizarDisplayCron();atualizarCorCron();
+    },1000);
+  }
+}
+
+function zerarCronometro(){
+  clearInterval(cronInterval);cronInterval=null;cronRodando=false;
+  cronRestante=cronTotal;atualizarDisplayCron();
+  var t=document.getElementById('cron-timer');
+  t.style.animation='';t.style.background='#0E3D1A';
+  document.getElementById('btn-cron-iniciar').textContent='INICIAR';
+  document.getElementById('cron-status').textContent='PRONTO';
+}
+
+function atualizarDisplayCron(){
+  var m=Math.floor(cronRestante/60),s=cronRestante%60;
+  document.getElementById('cron-tempo').textContent=m+':'+(s<10?'0':'')+s;
+}
+
+function atualizarCorCron(){
+  var t=document.getElementById('cron-timer');
+  if(cronRestante<=60){
+    t.style.animation='';t.style.background='#5C4000';
+    document.getElementById('cron-status').textContent='ATENCAO — 1 MINUTO!';
+  }else{
+    t.style.animation='';t.style.background='#0E3D1A';
+    document.getElementById('cron-status').textContent='EM ANDAMENTO';
+  }
+}
+
+function tempoEsgotado(){
+  document.getElementById('cron-tempo').textContent='0:00';
+  document.getElementById('cron-status').textContent='TEMPO ESGOTADO';
+  document.getElementById('btn-cron-iniciar').textContent='INICIAR';
+  document.getElementById('cron-timer').style.animation='piscaVermelho 1.2s ease-in-out infinite';
+}
+
+function voltarRegras(){
+  clearInterval(cronInterval);cronInterval=null;cronRodando=false;
+  document.getElementById('cron-timer').style.display='none';
+  document.getElementById('cron-regras').style.display='flex';
+}
+</script>
 
 </body>
 </html>
