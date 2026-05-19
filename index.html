@@ -276,15 +276,25 @@
       <div class="brand-name">30 <span>SEMANAS</span> VOLTZ</div>
     </div>
     <div class="header-actions" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-      <a href="#" class="header-btn primary" onclick="showPage('participante')" style="font-size:12px;padding:7px 14px;">📝 CADASTRAR</a>
       <a href="#" class="header-btn primary" onclick="showPage('cadastro-confidente')" style="font-size:12px;padding:7px 14px;">🎯 SER CONFIDENTE</a>
       <a href="#" class="header-btn" onclick="showPage('portal')" style="font-size:12px;padding:7px 14px;">// CONFIDENTE</a>
-      <a href="#" class="header-btn" onclick="showPage('presenca')" style="font-size:12px;padding:7px 14px;">// RODA DE PARTILHA</a>
+      <a href="#" class="header-btn" onclick="showPage('presenca')" style="font-size:12px;padding:7px 14px;">// PRESENÇA NA PARTILHA</a>
       <a href="#" class="header-btn" onclick="showPage('login')" style="font-size:12px;padding:7px 14px;">⚙ ADMIN</a>
     </div>
   </header>
 
-  <div class="hero">
+  <!-- HERO TOP: Ciclo 2026 — fundo claro com VOLTZ fantasma -->
+  <div style="position:relative;background:#f0ede8;overflow:hidden;padding:60px 40px 50px;text-align:center;">
+    <!-- VOLTZ fantasma atrás -->
+    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;user-select:none;">
+      <span style="font-family:'Bebas Neue',sans-serif;font-size:clamp(120px,20vw,220px);color:rgba(0,0,0,0.06);letter-spacing:10px;line-height:1;">VOLTZ</span>
+    </div>
+    <h1 style="position:relative;font-family:'Bebas Neue',sans-serif;font-size:clamp(64px,12vw,140px);line-height:0.9;letter-spacing:4px;color:#1a1a1a;margin:0 0 28px;">CICLO 2026</h1>
+    <a href="#" onclick="showPage('participante')" style="position:relative;display:inline-block;background:var(--orange);color:#fff;font-family:'Bebas Neue',sans-serif;font-size:clamp(18px,3vw,26px);letter-spacing:3px;padding:14px 44px;border-radius:50px;text-decoration:none;box-shadow:0 6px 24px rgba(232,77,28,0.35);transition:background .2s;" onmouseover="this.style.background='var(--orange-light)'" onmouseout="this.style.background='var(--orange)'">FAÇA SUA INSCRIÇÃO</a>
+  </div>
+
+  <!-- HERO BOTTOM: Escolha seu confidente — fundo verde escuro -->
+  <div class="hero" style="padding-top:50px;padding-bottom:50px;">
     <h1>ESCOLHA SEU<span class="highlight">CONFIDENTE</span><span class="sub">30 SEMANAS</span></h1>
     <p class="hero-desc">Conecte-se com um confidente que vai caminhar com você nessa jornada. Escolha, inscreva-se e transforme suas próximas 30 semanas.</p>
     <div class="search-wrap">
@@ -528,7 +538,7 @@
                 <th>Cód. AGR</th>
                 <th>Encontros</th>
                 <th>Datas dos Encontros</th>
-                <th>Rodas de Partilha</th>
+                <th>Presenças na Partilha</th>
                 <th>Leitura das Memórias</th>
               </tr>
             </thead>
@@ -1506,7 +1516,7 @@ async function saveAll() {
 
 
 
-// ════ RODA DE PARTILHA ════
+// ════ PRESENÇA NA PARTILHA ════
 var FAC_CODE = 'FAC-VTZ-26';
 var presVideoStream = null;
 var presScanning = false;
@@ -1943,7 +1953,7 @@ function getPhotoSrc(m){
 </div>
 
 
-<!-- ═══════════════ RODA DE PARTILHA ═══════════════ -->
+<!-- ═══════════════ PRESENÇA NA PARTILHA ═══════════════ -->
 <div id="page-presenca" class="page">
   <div class="cadastro-header">
     <div class="brand-logo">
@@ -1957,7 +1967,7 @@ function getPhotoSrc(m){
   <div id="pres-login" style="min-height:calc(100vh - 70px);display:flex;align-items:center;justify-content:center;padding:20px;">
     <div class="login-box" style="max-width:440px;">
       <div class="login-logo">30<span>S</span></div>
-      <div class="login-sub">// Roda de Partilha</div>
+      <div class="login-sub">// Presença na Partilha</div>
       <p style="color:var(--text-muted);font-size:13px;margin-bottom:24px;line-height:1.6;">
         Digite o código do facilitador para habilitar a leitura de QR Codes de presença.
       </p>
@@ -1978,7 +1988,7 @@ function getPhotoSrc(m){
   <div id="pres-scanner" style="display:none;max-width:600px;margin:0 auto;padding:30px 20px;">
 
     <div style="text-align:center;margin-bottom:20px;">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--orange);margin-bottom:4px;">// RODA DE PARTILHA</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--orange);margin-bottom:4px;">// PRESENÇA NA PARTILHA</div>
       <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;" id="pres-data-display"></div>
     </div>
 
