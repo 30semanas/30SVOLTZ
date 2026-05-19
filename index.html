@@ -1020,13 +1020,13 @@ async function enviarPresencas(){
 
 function fecharResultadoPresenca(){
   document.getElementById('pres-result-modal').classList.remove('open');
-  // Reset tudo e volta ao início
+  // Reset estado interno
   presLidos=[];presScanning=false;presAnimFrame=null;presVideoStream=null;_facToken=null;
   document.getElementById('fac-code').value='';
-  document.getElementById('pres-login').style.display='flex';
-  document.getElementById('pres-scanner').style.display='none';
-  atualizarListaLidos();
-  showPage('public');
+  // Vai direto para a página principal SEM passar pela tela de presença
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-public').classList.add('active');
+  renderPublic();
 }
 
 function reiniciarScanner(){presLidos=[];atualizarListaLidos();document.getElementById('pres-enviado').style.display='none';if(!presScanning){presScanning=true;iniciarCamera();}}
