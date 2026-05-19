@@ -658,7 +658,20 @@ async function loadData(showMsg) {
     const res  = await fetch(SHEETS_URL + '?action=getData&cb=' + Date.now(), { signal: controller.signal });
     clearTimeout(tid);
     const text = await res.text();
-    const json = JSON.parse(text);
+    // Remove base64 grandes antes de parsear para não travar
+    const cleanText = text.replace(/"photo":"data:[^"]{500,}"/g, '"photo":"__B64__"');
+    const json = JSON.parse(cleanText);
+    // Restaura fotos base64 do localStorage
+    if (Array.isArray(json.mentors)) {
+      json.mentors.forEach(function(m) {
+        if (m.photo === '__B64__') m.photo = localStorage.getItem('photo_'+m.id) || '';
+      });
+    }
+    if (Array.isArray(json.allMentors)) {
+      json.allMentors.forEach(function(m) {
+        if (m.photo === '__B64__') m.photo = localStorage.getItem('photo_'+m.id) || '';
+      });
+    }
 
     if (Array.isArray(json.mentors)) {
       mentors = json.mentors.filter(m => m.status === 'aprovado').map(m => {
