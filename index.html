@@ -637,6 +637,7 @@ let mentors = [];        // approved confidentes
 let pending = [];        // pending approval
 let registrations = [];
 let participantes = [];
+let presencas = [];
 let currentId = null;
 let partDadosCarregados = null;
 let partSexo = '';
@@ -694,6 +695,7 @@ async function loadData(showMsg) {
     }
     if (Array.isArray(json.registrations)) registrations = json.registrations;
     if (Array.isArray(json.participantes))  participantes  = json.participantes;
+    if (Array.isArray(json.presencas))         presencas       = json.presencas;
     if (showMsg) showToast('✅ DADOS ATUALIZADOS!');
   } catch(e) {
     showToast('⚠️ Erro ao carregar. Verifique a conexão.');
