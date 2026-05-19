@@ -1134,7 +1134,7 @@ function renderAdmin(){
         var p = baseList[ei];
         var partCod = (p.codigo||'').toUpperCase();
 
-        // Cruza com Inscricoes pelo PART-XXXX
+        // Cruza com Inscricoes SOMENTE pelo PART-XXXX
         var reg = null;
         for (var ri = 0; ri < registrations.length; ri++) {
           if ((registrations[ri].codigoPart||'').toUpperCase() === partCod) {
@@ -1685,6 +1685,7 @@ function abrirDetalheParticipante(partCod) {
   if (!p) return;
 
   var reg = null;
+  // Busca SOMENTE pelo PART-XXXX
   for (var i = 0; i < registrations.length; i++) {
     if ((registrations[i].codigoPart||'').toUpperCase() === partCod.toUpperCase()) {
       reg = registrations[i]; break;
