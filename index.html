@@ -458,6 +458,32 @@ body{font-family:'Barlow',sans-serif;background:var(--dark);color:var(--text);mi
       </div>
       <button class="btn-primary" id="part-btn" onclick="submitParticipante()">✅ REALIZAR CADASTRO</button>
     </div>
+
+    <!-- RECUPERAR QR CODE -->
+    <div style="margin-top:16px;text-align:center;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);">ou</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+      <button onclick="abrirRecuperacao()" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:4px;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--text-muted)'">
+        🔑 RECUPERAR MEU QR CODE
+      </button>
+    <div class="cadastro-card" style="display:none;" id="part-recupera-card">
+    </div>
+    </div>
+    <!-- CARD RECUPERAÇÃO -->
+    <div id="part-recupera-card" class="cadastro-card" style="display:none;margin-top:0;">
+      <div class="section-divider">// RECUPERAR QR CODE</div>
+      <p style="color:var(--text-muted);font-size:13px;margin-bottom:16px;line-height:1.6;">Digite seu CPF para recuperar seu código de participante e QR Code.</p>
+      <div class="form-group">
+        <label>CPF *</label>
+        <input type="text" id="rec-cpf" placeholder="000.000.000-00" maxlength="14" oninput="applyCpfMask(this)">
+      </div>
+      <div id="rec-error" style="display:none;background:rgba(229,57,53,0.1);border:1px solid rgba(229,57,53,0.3);color:#FF6B6B;border-radius:4px;padding:10px;font-size:13px;margin-bottom:10px;">CPF não encontrado. Verifique ou realize seu cadastro.</div>
+      <button class="btn-primary" id="rec-btn" onclick="recuperarQR()">🔍 BUSCAR MEU CÓDIGO</button>
+      <button onclick="fecharRecuperacao()" style="width:100%;background:transparent;border:1px solid var(--border);color:var(--text-muted);border-radius:4px;padding:10px;margin-top:8px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;">✕ CANCELAR</button>
+    </div>
   </div>
   <div id="part-result-area" style="display:none;max-width:500px;margin:0 auto;padding:50px 40px;text-align:center;">
     <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:3px;color:var(--orange);margin-bottom:8px;">// CADASTRO REALIZADO</div>
@@ -1016,6 +1042,55 @@ async function enviarPresencas(){
     document.getElementById('pres-result-modal').classList.add('open');
   }catch(e){showToast('⚠️ ERRO AO ENVIAR. TENTE NOVAMENTE.');}
   btn.disabled=false;btn.textContent='✅ ENVIAR PRESENÇAS ('+presLidos.length+')';
+}
+
+
+// ════ RECUPERAÇÃO DE QR CODE ════
+function abrirRecuperacao() {
+  document.getElementById('part-recupera-card').style.display = 'block';
+  document.getElementById('rec-cpf').value = '';
+  document.getElementById('rec-error').style.display = 'none';
+  document.getElementById('part-recupera-card').scrollIntoView({behavior:'smooth', block:'center'});
+}
+
+function fecharRecuperacao() {
+  document.getElementById('part-recupera-card').style.display = 'none';
+  document.getElementById('rec-cpf').value = '';
+  document.getElementById('rec-error').style.display = 'none';
+}
+
+async function recuperarQR() {
+  const cpf = document.getElementById('rec-cpf').value.trim();
+  if (!cpf || cpf.replace(/\D/g,'').length !== 11) { showToast('⚠️ DIGITE UM CPF VÁLIDO'); return; }
+  const btn = document.getElementById('rec-btn');
+  btn.disabled = true; btn.textContent = '⏳ BUSCANDO...';
+  document.getElementById('rec-error').style.display = 'none';
+  try {
+    const res = await fetch(SHEETS_URL + '?action=getParticipanteByCPF&cpf=' + encodeURIComponent(cpf.replace(/\D/g,'')) + '&cb=' + Date.now());
+    const json = await res.json();
+    if (json.status === 'ok' && json.participante) {
+      const codigo = json.participante.codigo;
+      const nome   = json.participante.nome;
+      // Esconde form, mostra resultado
+      document.getElementById('part-form-area').style.display = 'none';
+      document.getElementById('part-result-area').style.display = 'block';
+      document.getElementById('part-result-nome').textContent = nome.toUpperCase();
+      document.getElementById('part-result-codigo').textContent = codigo;
+      document.getElementById('qr-container').innerHTML = '';
+      if (window.QRCode) {
+        new QRCode(document.getElementById('qr-container'), {
+          text: codigo, width: 180, height: 180,
+          colorDark: '#000000', colorLight: '#ffffff',
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    } else {
+      document.getElementById('rec-error').style.display = 'block';
+    }
+  } catch(e) {
+    document.getElementById('rec-error').style.display = 'block';
+  }
+  btn.disabled = false; btn.textContent = '🔍 BUSCAR MEU CÓDIGO';
 }
 
 function fecharResultadoPresenca(){
