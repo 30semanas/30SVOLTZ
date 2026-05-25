@@ -1172,7 +1172,7 @@ function atualizarListaLidos(){
     const hora=document.createElement('div');hora.style.cssText='font-size:11px;color:var(--text-muted);';hora.textContent='Lido às '+new Date(p.timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
     info.appendChild(cod);info.appendChild(hora);
     const btnR=document.createElement('button');btnR.style.cssText='background:transparent;border:none;color:var(--text-muted);cursor:pointer;font-size:16px;padding:4px;';btnR.textContent='✕';
-    btnR.addEventListener('click',()=>{presLidos.splice(i,1);atualizarListaLidos();});
+    (function(idx){btnR.addEventListener('click',function(){presLidos.splice(idx,1);atualizarListaLidos();});})(i);
     wrap.appendChild(num);wrap.appendChild(info);wrap.appendChild(btnR);lista.appendChild(wrap);
   });
 }
@@ -1187,6 +1187,9 @@ async function enviarPresencas(){
     presScanning=false;
     if(presAnimFrame)cancelAnimationFrame(presAnimFrame);
     if(presVideoStream){presVideoStream.getTracks().forEach(t=>t.stop());presVideoStream=null;}
+    // Limpa lista
+    presLidos=[];
+    atualizarListaLidos();
     // Mostra modal de resultado
     document.getElementById('pres-res-salvos').textContent=res.salvos||0;
     document.getElementById('pres-res-dup').textContent=res.duplicatas||0;
